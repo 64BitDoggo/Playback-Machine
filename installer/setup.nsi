@@ -1,23 +1,28 @@
-; Playback Machine — NSIS installer script.
+; Playback Machine — NSIS installer script (NSIS 3.x).
 ;
-; Build (from the repo root, after `scripts/build_cross.sh` has produced
-; dist/PlaybackMachine/):
-;   makensis installer/setup.nsi
+; Build (the app must be built first, so dist/PlaybackMachine/ exists):
+;     makensis installer/setup.nsi
 ;
 ; Produces: dist/PlaybackMachine-Setup.exe
+;
+; All paths are anchored to ${__FILEDIR__} (the folder containing this .nsi),
+; so you can run makensis from any working directory.
 
 !include "MUI2.nsh"
 
+; This script lives in <root>/installer/, so the repo root is ..\
+!define ROOT "${__FILEDIR__}\.."
+
 Name "Playback Machine"
-OutFile "dist/PlaybackMachine-Setup.exe"
+OutFile "${ROOT}\dist\PlaybackMachine-Setup.exe"
 InstallDir "$PROGRAMFILES64\Playback Machine"
 InstallDirRegKey HKLM "Software\PlaybackMachine" "InstallDir"
 RequestExecutionLevel admin
 SetCompressor /SOLID lzma
 
 ; ---- UI -------------------------------------------------------------------
-!define MUI_ICON "..\resources\app.ico"
-!define MUI_UNICON "..\resources\app.ico"
+!define MUI_ICON "${ROOT}\resources\app.ico"
+!define MUI_UNICON "${ROOT}\resources\app.ico"
 !define MUI_ABORTWARNING
 
 !insertmacro MUI_PAGE_WELCOME
@@ -36,8 +41,8 @@ Section "Playback Machine" SecMain
   SectionIn RO
   SetOutPath "$INSTDIR"
 
-  ; Application + FFmpeg DLLs.
-  File /r "..\dist\PlaybackMachine\*.*"
+  ; Application + FFmpeg DLLs (everything in the built folder).
+  File /r "${ROOT}\dist\PlaybackMachine\*.*"
 
   WriteRegStr HKLM "Software\PlaybackMachine" "InstallDir" "$INSTDIR"
   WriteUninstaller "$INSTDIR\uninstall.exe"
@@ -47,7 +52,7 @@ Section "Playback Machine" SecMain
   CreateShortcut "$SMPROGRAMS\Playback Machine\Playback Machine.lnk" "$INSTDIR\PlaybackMachine.exe"
   CreateShortcut "$SMPROGRAMS\Playback Machine\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 
-  ; Desktop shortcut (optional, default on).
+  ; Desktop shortcut (default on).
   CreateShortcut "$DESKTOP\Playback Machine.lnk" "$INSTDIR\PlaybackMachine.exe"
 SectionEnd
 
