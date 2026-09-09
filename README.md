@@ -75,14 +75,19 @@ stepping/reverse never dead-ends.
    DLLs copied next to it. Add `-Static` to link the static libs instead
    (no DLLs to bundle).
 
-### Cross-building a Windows `.exe` from Linux (zig)
+### Cross-building a Windows `.exe` from Linux
+
+Use a **mingw-w64 C++ cross-compiler** (it ships the C++ standard library):
 
 ```bash
+sudo apt-get install g++-mingw-w64-x86-64     # Debian/Ubuntu
 FFMPEG_ROOT=/path/to/ffmpeg-win64 ./scripts/build_cross.sh
 ```
 
-requires `zig` and a FFmpeg win64 build. A `CMakeLists.txt` is also provided
-for native Windows CMake builds (`-DFFMPEG_ROOT=...`).
+This produces a self-contained `dist/PlaybackMachine/PlaybackMachine.exe`
+(the C++ runtime is statically linked; FFmpeg DLLs are bundled for a shared
+FFmpeg). A `CMakeLists.txt` is also provided for native Windows CMake builds
+(`-DFFMPEG_ROOT=...`).
 
 > **Note:** the FFmpeg build must include the codecs you want. The bundled
 > GPL builds include everything (H.264/HEVC/AV1/VP9/Vorbis/Opus/MP3/… ).

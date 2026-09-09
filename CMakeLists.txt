@@ -5,7 +5,7 @@
 #   cmake --build .
 #
 # FFMPEG_ROOT must point at a FFmpeg win64 build with include/ and lib/.
-# For a zig cross-build from Linux, use scripts/build_cross.sh instead.
+# For a cross-build from Linux, use scripts/build_cross.sh (mingw-w64) instead.
 
 cmake_minimum_required(VERSION 3.16)
 project(PlaybackMachine LANGUAGES C CXX)
