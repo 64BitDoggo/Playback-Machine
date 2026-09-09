@@ -14,7 +14,9 @@ REM                FFmpeg-Builds win64-gpl-shared zip).
 REM  [static]      Add this word to link the FFmpeg static libs
 REM                instead of the shared DLLs (nothing bundled).
 REM ============================================================
-setlocal EnableExtensions EnableDelayedExpansion
+REM NOTE: delayed expansion is deliberately NOT enabled, so a "!" in a
+REM folder name (e.g. "...! Projects...") stays literal and isn't mangled.
+setlocal EnableExtensions
 
 if "%~1"=="" (
     echo Usage: build_windows.bat ^<FFmpegRoot^> [static]
@@ -25,7 +27,11 @@ set "FF=%~1"
 set "STATIC=0"
 if /I "%~2"=="static" set "STATIC=1"
 
-set "ROOT=%~dp0.."
+REM Resolve the repo root (parent of this scripts\ folder) as a clean,
+REM fully-qualified path - works even when the path has spaces or "!".
+cd /d "%~dp0.."
+for %%I in (.) do set "ROOT=%%~fI"
+
 set "OUT=%ROOT%\dist\PlaybackMachine"
 set "EXE=%OUT%\PlaybackMachine.exe"
 set "INC=%FF%\include"
@@ -45,7 +51,8 @@ if errorlevel 1 (
     exit /b 1
 )
 
-REM app.rc references resources\* relative to the repo root.
+REM We're already in the repo root (cd'd above); app.rc's resources\* paths
+REM resolve from here.
 cd /d "%ROOT%"
 
 if exist "%OUT%" rmdir /s /q "%OUT%"
