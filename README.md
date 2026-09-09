@@ -57,23 +57,30 @@ stepping/reverse never dead-ends.
 
 ## Building
 
-### On Windows (MSVC)
+### On Windows (MSVC) — recommended
 
-1. Install the **Visual Studio 2019/2022** “Desktop development with C++”
-   workload.
-2. Get a FFmpeg **win64** build with `include\` and `lib\`. An easy source is
-   a [FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds/releases)
-   `win64-gpl-shared` zip (extract it — it has `bin\*.dll`, `lib\*.lib`,
-   `include\`).
-3. From the repo root:
+1. Install **Visual Studio 2019/2022** with the **“Desktop development with
+   C++”** workload (this provides `cl.exe`, `link.exe`, `rc.exe` + the Windows
+   SDK).
+2. Get a FFmpeg **win64** build with `include\` and `lib\`. Easiest source: a
+   [FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds/releases)
+   **`win64-gpl-shared`** zip — extract it. It contains `bin\` (the DLLs),
+   `lib\` (the import `.lib`s) and `include\` (headers).
+3. Open **“x64 Native Tools Command Prompt for VS 2022”** (Start menu →
+   Visual Studio folder). This sets up the MSVC environment.
+4. `cd` to the repo root and run:
 
-   ```powershell
-   .\scripts\build_windows.ps1 -FFmpegRoot C:\path\to\ffmpeg-win64
+   ```bat
+   scripts\build_windows.bat C:\path\to\extracted\ffmpeg-win64
    ```
 
-   This produces `dist\PlaybackMachine\PlaybackMachine.exe` with the FFmpeg
-   DLLs copied next to it. Add `-Static` to link the static libs instead
-   (no DLLs to bundle).
+   (or from PowerShell: `.\scripts\build_windows.ps1 -FFmpegRoot C:\path\...`).
+   Add a trailing `static` / `-Static` to link the FFmpeg static libs instead
+   of the shared DLLs.
+
+   This produces **`dist\PlaybackMachine\PlaybackMachine.exe`** with the FFmpeg
+   DLLs copied next to it. That whole folder is portable — copy it anywhere
+   and run it.
 
 ### Cross-building a Windows `.exe` from Linux
 

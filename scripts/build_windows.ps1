@@ -23,6 +23,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 $Root    = Split-Path -Parent $PSScriptRoot
+# app.rc references resources/* relative to the repo root, so run from there.
+Set-Location $Root
 $OutDir  = Join-Path $Root "dist\PlaybackMachine"
 $Sources = @("main_win.cpp","gui_win.cpp","engine.cpp","ffdyn.cpp") |
            ForEach-Object { Join-Path $Root "src\$_" }
