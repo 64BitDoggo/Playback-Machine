@@ -65,8 +65,8 @@ if errorlevel 1 ( echo [error] rc failed & exit /b 1 )
 echo == [2/4] Compiling C++ sources ==
 for %%s in (main_win gui_win engine ffdyn) do (
     echo     cl %%s.cpp
-    cl.exe /nologo /O2 /EHsc /DUNICODE /D_UNICODE /I"%INC%" /c "%ROOT%\src\%%s.cpp" /Fo"%OUT%\%%s.obj"
-    if errorlevel 1 ( echo [error] cl failed on %%s.cpp & exit /b 1 )
+    cl.exe /nologo /std:c++17 /O2 /EHsc /DUNICODE /D_UNICODE /I"%INC%" /c "%ROOT%\src\%%s.cpp" /Fo"%OUT%\%%s.obj"
+    if errorlevel 1 ( echo. & echo [error] cl failed on %%s.cpp - the compiler message is printed above this line. & exit /b 1 )
 )
 
 echo == [3/4] Linking PlaybackMachine.exe ==
