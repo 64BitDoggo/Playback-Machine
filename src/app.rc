@@ -1,0 +1,38 @@
+// Playback Machine — Windows resources.
+
+#include <winver.h>
+
+#define APP_ICON 140
+
+APP_ICON ICON "resources/app.ico"
+
+1 RT_MANIFEST "resources/app.manifest"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION     1,0,0,0
+ PRODUCTVERSION  1,0,0,0
+ FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+ FILEFLAGS       0
+ FILEOS          VOS_NT_WINDOWS32
+ FILETYPE        VFT_APP
+ FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName",      "Playback Machine"
+            VALUE "FileDescription",  "Playback Machine"
+            VALUE "FileVersion",      "1.0.0.0"
+            VALUE "InternalName",     "PlaybackMachine"
+            VALUE "LegalCopyright",   "Playback Machine"
+            VALUE "OriginalFilename", "PlaybackMachine.exe"
+            VALUE "ProductName",      "Playback Machine"
+            VALUE "ProductVersion",   "1.0.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 1200
+    END
+END

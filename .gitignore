@@ -1,0 +1,32 @@
+# Build output
+dist/
+build/
+out/
+*.o
+*.obj
+*.exe
+*.dll
+*.a
+*.lib
+*.pdb
+*.res
+
+# FFmpeg build trees / toolchains (large, not part of the source)
+ff*/
+ffmpeg*/
+mingw*/
+toolchain*/
+
+# Editor / OS
+.vs/
+.vscode/
+.idea/
+*.user
+Thumbs.db
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
