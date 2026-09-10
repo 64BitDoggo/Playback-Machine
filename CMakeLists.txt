@@ -30,7 +30,8 @@ add_executable(PlaybackMachine WIN32 ${SOURCES})
 target_include_directories(PlaybackMachine PRIVATE "${FFMPEG_ROOT}/include")
 target_link_directories(PlaybackMachine PRIVATE "${FFMPEG_ROOT}/lib")
 
-target_compile_definitions(PlaybackMachine PRIVATE UNICODE=_UNICODE)
+# The app uses the ANSI Win32 API throughout (FFmpeg's API also takes narrow
+# const char* paths), so do NOT define UNICODE/_UNICODE.
 
 # FFmpeg shared libs.
 target_link_libraries(PlaybackMachine PRIVATE

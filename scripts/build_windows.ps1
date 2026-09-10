@@ -60,7 +60,7 @@ if ($LASTEXITCODE -ne 0) { throw "rc failed" }
 $objFiles = @()
 foreach ($s in $Sources) {
     $obj = Join-Path $OutDir ((Split-Path $s -Leaf) -replace "\.cpp$",".obj")
-    & cl.exe /nologo /std:c++17 /O2 /EHsc /DUNICODE /D_UNICODE "/I$Inc" /c $s /Fo$obj
+    & cl.exe /nologo /std:c++17 /O2 /EHsc "/I$Inc" /c $s /Fo$obj
     if ($LASTEXITCODE -ne 0) { throw "cl failed on $s" }
     $objFiles += $obj
 }

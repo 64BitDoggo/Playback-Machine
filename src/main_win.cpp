@@ -67,7 +67,6 @@ static HWND g_btnOpen = nullptr, g_btnPlay = nullptr, g_btnStepBack = nullptr,
            g_btnVolUp = nullptr, g_seek = nullptr, g_lblTime = nullptr,
            g_lblCodec = nullptr;
 static bool    g_seeking = false;  // true while the user drags the seek bar
-static DWORD   g_lastTrackingTick = 0;
 static int     g_volume = 100;
 static uint64_t g_lastToken = 0;
 static std::string g_curFile;
@@ -187,8 +186,8 @@ static void layoutControls(HWND hwnd) {
 
     // Row 1: buttons (y = barY + 6, h = 28)
     int y = barY + 6, h = 28, x = 8, w;
-    auto place = [&](HWND h, int bw) {
-        if (h) MoveWindow(h, x, y, bw, h, TRUE);
+    auto place = [&](HWND bh, int bw) {
+        if (bh) MoveWindow(bh, x, y, bw, h, TRUE);
         x += bw + 6;
     };
     place(g_btnOpen, 64);
@@ -273,11 +272,10 @@ static LRESULT CALLBACK wndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
         g_btnVolDown  = makeButton(h, "Vol-",   IDC_VOLDOWN,  BS_PUSHBUTTON);
         g_btnVolUp    = makeButton(h, "Vol+",   IDC_VOLUP,    BS_PUSHBUTTON);
 
-        g_seek = CreateWindowExA(0, WINDOWCLASS_TRACKBAR, "",
-                                 WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS,
+        g_seek = CreateWindowExA(0, TRACKBAR_CLASSA, "",
+                                 WS_CHILD | WS_VISIBLE | TBS_NOTICKS,
                                  0, 0, 10, 10, h, (HMENU)(INT_PTR)IDC_SEEK, inst, nullptr);
         SendMessageA(g_seek, TBM_SETRANGE, TRUE, MAKELPARAM(0, 60000));
-        SendMessageA(g_seek, TBM_SETTICKFREQ, 1000, 0);
 
         g_lblTime  = makeButton(h, "0:00 / 0:00", IDC_TIME,  BS_LEFT);
         g_lblCodec = makeButton(h, "",            IDC_CODEC, BS_LEFT);
@@ -292,14 +290,14 @@ static LRESULT CALLBACK wndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
         return 0;
 
     case WM_COMMAND: {
-        int id = LOWORD(w), code = HIWORD(w);
+        int id = LOWORD(w);
         switch (id) {
         case IDC_OPEN: {
             char file[MAX_PATH] = {0};
             OPENFILENAMEA ofn{};
             ofn.lStructSize = sizeof(ofn);
             ofn.hwndOwner = h;
-            ofn.lpFilter = "Video & audio files\0*.*\0All files\0*.*\0";
+            ofn.lpstrFilter = "Video & audio files\0*.*\0All files\0*.*\0";
             ofn.lpstrFile = file;
             ofn.nMaxFile = MAX_PATH;
             ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
@@ -355,14 +353,17 @@ static LRESULT CALLBACK wndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
             g_volume += 10; if (g_volume > 100) g_volume = 100;
             g_engine.setVolume(g_volume);
             return 0;
-        case IDC_SEEK:
-            if (code == HCS_TRACKING) {
-                g_seeking = true;
-                g_lastTrackingTick = GetTickCount();
-                int ms = (int)SendMessageA(g_seek, TBM_GETPOS, 0, 0);
-                seekToTime(ms / 1000.0);
-            }
-            return 0;
+        }
+        return 0;
+    }
+
+    case WM_HSCROLL: {
+        // The seek trackbar reports through WM_HSCROLL (not WM_COMMAND).
+        int code = LOWORD(w);
+        if (code == HCS_TRACKING || code == HCS_ENDSCROLL) {
+            int ms = (int)SendMessageA(g_seek, TBM_GETPOS, 0, 0);
+            seekToTime(ms / 1000.0);
+            g_seeking = (code == HCS_TRACKING);
         }
         return 0;
     }
@@ -397,11 +398,8 @@ static LRESULT CALLBACK wndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
         return 0;
 
     case WM_TIMER:
-        if (w == 1) {
-            if (g_seeking && (GetTickCount() - g_lastTrackingTick) > 200)
-                g_seeking = false; // the thumb was released
+        if (w == 1)
             updateUI();
-        }
         return 0;
 
     case WM_GETMINMAXINFO: {
