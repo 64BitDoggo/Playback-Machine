@@ -31,6 +31,16 @@
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "shell32.lib")
 
+// Trackbar (slider) WM_HSCROLL notification codes. commctrl.h defines these
+// on modern SDKs; the #ifndef guards provide the values (HCS_TRACKING = 2,
+// HCS_ENDSCROLL = 5) in case a particular SDK/flag combination omits them.
+#ifndef HCS_TRACKING
+#define HCS_TRACKING 2
+#endif
+#ifndef HCS_ENDSCROLL
+#define HCS_ENDSCROLL 5
+#endif
+
 // ---------------------------------------------------------------------------
 // Control ids
 // ---------------------------------------------------------------------------
