@@ -458,7 +458,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int nShow) {
         return 1;
     }
 
-    WNDCLASSESA wc{};
+    WNDCLASSENA wc{};
     wc.style = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = wndProc;
     wc.hInstance = hInst;
@@ -469,7 +469,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int nShow) {
     if (!RegisterClassA(&wc))
         return 1;
 
-    WNDCLASSESA vw{};
+    WNDCLASSENA vw{};
     vw.style = CS_HREDRAW | CS_VREDRAW;
     vw.lpfnWndProc = videoProc;
     vw.hInstance = hInst;
